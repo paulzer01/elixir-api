@@ -1,8 +1,8 @@
 defmodule RestApiWeb.AccountController do
   use RestApiWeb, :controller
 
-  alias RestApi.Accounts
-  alias RestApi.Accounts.Account
+  alias RestApi.Auth.Guardian
+  alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
   action_fallback RestApiWeb.FallbackController
 
@@ -12,11 +12,13 @@ defmodule RestApiWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+         {:ok, %User{} = _user} <- Users.create_user(account) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/accounts/#{account}")
-      |> render(:show, account: account)
+      # |> put_resp_header("location", ~p"/api/accounts/#{account}")
+      |> render(:account_token, account: account, token: token)
     end
   end
 

@@ -15,7 +15,7 @@ defmodule RestApiWeb.UserController do
     with {:ok, %User{} = user} <- Users.create_user(user_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/user/#{user}")
+      # |> put_resp_header("location", ~p"/api/user/#{user}")
       |> render(:show, user: user)
     end
   end
