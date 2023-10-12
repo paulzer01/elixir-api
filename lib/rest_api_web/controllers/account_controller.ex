@@ -1,7 +1,7 @@
 defmodule RestApiWeb.AccountController do
   use RestApiWeb, :controller
 
-  alias RestApi.Auth.Guardian
+  alias RestApi.Auth.{Guardian, ErrorResponse.Unauthorized}
   alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
   action_fallback RestApiWeb.FallbackController
@@ -19,6 +19,18 @@ defmodule RestApiWeb.AccountController do
       |> put_status(:created)
       # |> put_resp_header("location", ~p"/api/accounts/#{account}")
       |> render(:account_token, account: account, token: token)
+    end
+  end
+
+  def sign_in(conn, %{"email" => email, "hashed_password" => hashed_password}) do
+    case Guardian.authenticate(email, hashed_password) do
+      {:ok, account, token} ->
+        conn
+        |> put_status(:ok)
+        |> render(:account_token, account: account, token: token)
+
+      {:error, :unauthorized} ->
+        raise Unauthorized, message: "Invalid credentials."
     end
   end
 
