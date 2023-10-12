@@ -1,10 +1,25 @@
 defmodule RestApiWeb.AccountController do
   use RestApiWeb, :controller
 
+  alias RestApiWeb.Auth.ErrorResponse
   alias RestApiWeb.Auth.{Guardian, ErrorResponse.Unauthorized}
   alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
+  # plugs the :is_authorized_account (right below) function into the :update and :delete actions
+  plug :is_authorized_account when action in [:update, :delete]
+
   action_fallback RestApiWeb.FallbackController
+
+  defp is_authorized_account(conn, _opts) do
+    %{params: %{"account" => params}} = conn
+    account = Accounts.get_account!(params["id"])
+
+    if conn.assigns.account.id == account.id do
+      conn
+    else
+      raise ErrorResponse.Forbidden
+    end
+  end
 
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
@@ -14,7 +29,7 @@ defmodule RestApiWeb.AccountController do
   def create(conn, %{"account" => account_params}) do
     with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
          {:ok, token, _claims} <- Guardian.encode_and_sign(account),
-         {:ok, %User{} = _user} <- Users.create_user(account) do
+         {:ok, %User{} = _user} <- Users.create_user(account, account_params) do
       conn
       |> put_status(:created)
       # |> put_resp_header("location", ~p"/api/accounts/#{account}")
@@ -40,8 +55,8 @@ defmodule RestApiWeb.AccountController do
     render(conn, :show, account: account)
   end
 
-  def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Accounts.get_account!(id)
+  def update(conn, %{"account" => account_params}) do
+    account = Accounts.get_account!(account_params["id"])
 
     with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
       render(conn, :show, account: account)

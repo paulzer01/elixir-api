@@ -3,12 +3,12 @@ defmodule RestApiWeb.Router do
   use Plug.ErrorHandler
 
   def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
-    conn |> json(%{errors: message}) |> halt()
+  conn |> json(%{errors: message}) |> halt()
   end
 
   def handle_errors(conn, %{reason: %{message: message}}) do
-    conn |> json(%{errors: message}) |> halt()
-  end
+  conn |> json(%{errors: message}) |> halt()
+    end
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -32,7 +32,7 @@ defmodule RestApiWeb.Router do
     pipe_through [:api, :auth]
     get "/accounts/by_id/:id", AccountController, :show
     # get "/accounts/:id", AccountController, :show
-    # put "/accounts/:id", AccountController, :update
+    post "/accounts/update", AccountController, :update
     # delete "/accounts/:id", AccountController, :delete
   end
 end
