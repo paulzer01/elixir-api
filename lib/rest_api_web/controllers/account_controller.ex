@@ -26,6 +26,7 @@ defmodule RestApiWeb.AccountController do
     case Guardian.authenticate(email, hashed_password) do
       {:ok, account, token} ->
         conn
+        |> put_session(:account_id, account.id)
         |> put_status(:ok)
         |> render(:account_token, account: account, token: token)
 

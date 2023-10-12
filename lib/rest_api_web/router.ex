@@ -12,10 +12,12 @@ defmodule RestApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session # https://hexdocs.pm/plug/Plug.Conn.html#fetch_session/2 fetches session + cookies
   end
 
   pipeline :auth do
     plug RestApiWeb.Auth.Pipeline
+    plug RestApiWeb.Auth.SetAccount
   end
 
   scope "/api", RestApiWeb do
