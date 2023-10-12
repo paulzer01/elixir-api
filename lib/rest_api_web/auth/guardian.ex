@@ -1,4 +1,4 @@
-defmodule RestApi.Auth.Guardian do
+defmodule RestApiWeb.Auth.Guardian do
   use Guardian, otp_app: :rest_api
   alias RestApi.Accounts
 

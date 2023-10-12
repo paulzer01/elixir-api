@@ -1,8 +1,7 @@
 defmodule RestApiWeb.UserController do
   use RestApiWeb, :controller
 
-  alias RestApi.Users
-  alias RestApi.Users.User
+  alias RestApi.{Users, Users.User}
 
   action_fallback RestApiWeb.FallbackController
 

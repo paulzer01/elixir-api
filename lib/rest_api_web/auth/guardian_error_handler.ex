@@ -1,4 +1,4 @@
-defmodule RestApi.Auth.GuardianErrorHandler do
+defmodule RestApiWeb.Auth.GuardianErrorHandler do
   import Plug.Conn
 
   def auth_error(conn, {type, _reason}, _opts) do

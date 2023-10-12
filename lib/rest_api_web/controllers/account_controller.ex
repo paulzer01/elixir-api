@@ -1,7 +1,7 @@
 defmodule RestApiWeb.AccountController do
   use RestApiWeb, :controller
 
-  alias RestApi.Auth.{Guardian, ErrorResponse.Unauthorized}
+  alias RestApiWeb.Auth.{Guardian, ErrorResponse.Unauthorized}
   alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
   action_fallback RestApiWeb.FallbackController

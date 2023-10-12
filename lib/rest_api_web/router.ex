@@ -15,7 +15,7 @@ defmodule RestApiWeb.Router do
   end
 
   pipeline :auth do
-    plug RestApi.Auth.Pipeline
+    plug RestApiWeb.Auth.Pipeline
   end
 
   scope "/api", RestApiWeb do
