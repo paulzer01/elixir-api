@@ -15,14 +15,14 @@ defmodule RestApi.Accounts.Account do
 
   # this is helpful if you always forget to add new fields to the changeset
   defp all_fields do
-    __MODULE__.__schema__(:fields) -- @optional_fields
+    __MODULE__.__schema__(:fields)
   end
 
   @doc false
   def changeset(account, attrs) do
     account
     |> cast(attrs, all_fields())
-    |> validate_required(all_fields())
+    |> validate_required(all_fields() -- @optional_fields)
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must be a valid email address")
     |> validate_length(:hashed_password, max: 160)
     |> unique_constraint(:email)

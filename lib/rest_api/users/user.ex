@@ -2,7 +2,6 @@ defmodule RestApi.Users.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @optional_fields [:id, :inserted_at, :updated_at]
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "user" do
@@ -15,7 +14,7 @@ defmodule RestApi.Users.User do
   end
 
   defp all_fields do
-    __MODULE__.__schema__(:fields) -- @optional_fields
+    __MODULE__.__schema__(:fields)
   end
 
   @doc false
