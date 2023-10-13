@@ -37,6 +37,10 @@ defmodule RestApi.Accounts do
   """
   def get_account!(id), do: Repo.get!(Account, id)
 
+  def get_full_account(id) do
+    Account |> where(id: ^id) |> preload([:user]) |> Repo.one()
+  end
+
   @doc """
   Get a single account by email.
 

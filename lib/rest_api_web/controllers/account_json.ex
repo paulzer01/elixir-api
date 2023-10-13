@@ -1,5 +1,6 @@
 defmodule RestApiWeb.AccountJSON do
   alias RestApi.Accounts.Account
+  alias RestApiWeb.UserJSON
 
   @spec index(%{:accounts => any(), optional(any()) => any()}) :: %{data: list()}
   @doc """
@@ -13,26 +14,37 @@ defmodule RestApiWeb.AccountJSON do
   Renders a single account.
   """
   def show(%{account: account}) do
-    %{data: data(account)}
+    %{data: data_with_preloaded_user(account)}
   end
 
   def account_token(%{account: account, token: token}) do
-    %{data: data_and_token(account, token)}
+    %{data: data(account, token)}
+  end
+
+  def account_and_user(%{account: account, token: token}) do
+    %{data: data(account, token)}
   end
 
   defp data(%Account{} = account) do
     %{
       id: account.id,
       email: account.email
-      # hashed_password: account.hashed_password
     }
   end
 
-  defp data_and_token(%Account{} = account, token) do
+  defp data(%Account{} = account, token) do
     %{
       id: account.id,
       email: account.email,
       token: token
+    }
+  end
+
+  defp data_with_preloaded_user(%Account{} = account) do
+    %{
+      id: account.id,
+      email: account.email,
+      user: UserJSON.show(%{user: account.user})
     }
   end
 end

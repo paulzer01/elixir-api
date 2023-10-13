@@ -77,7 +77,7 @@ defmodule RestApiWeb.AccountController do
   end
 
   def show(conn, %{"id" => id}) do
-    account = Accounts.get_account!(id)
+    account = Accounts.get_full_account(id)
     render(conn, :show, account: account)
   end
 
