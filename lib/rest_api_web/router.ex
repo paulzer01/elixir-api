@@ -3,16 +3,17 @@ defmodule RestApiWeb.Router do
   use Plug.ErrorHandler
 
   def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
-  conn |> json(%{errors: message}) |> halt()
+    conn |> json(%{errors: message}) |> halt()
   end
 
   def handle_errors(conn, %{reason: %{message: message}}) do
-  conn |> json(%{errors: message}) |> halt()
-    end
+    conn |> json(%{errors: message}) |> halt()
+  end
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug :fetch_session # https://hexdocs.pm/plug/Plug.Conn.html#fetch_session/2 fetches session + cookies
+    # https://hexdocs.pm/plug/Plug.Conn.html#fetch_session/2 fetches session + cookies
+    plug :fetch_session
   end
 
   pipeline :auth do
@@ -35,5 +36,6 @@ defmodule RestApiWeb.Router do
     post "/accounts/update", AccountController, :update
     # delete "/accounts/:id", AccountController, :delete
     post "/accounts/sign_out", AccountController, :sign_out
+    post "/accounts/refresh_session", AccountController, :refresh_session
   end
 end
