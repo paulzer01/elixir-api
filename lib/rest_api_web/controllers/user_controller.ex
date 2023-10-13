@@ -1,7 +1,11 @@
 defmodule RestApiWeb.UserController do
   use RestApiWeb, :controller
 
+  import RestApiWeb.Auth.AuthorizePlug
+
   alias RestApi.{Users, Users.User}
+
+  plug :is_authorized when action in [:update, :delete]
 
   action_fallback RestApiWeb.FallbackController
 
@@ -24,10 +28,8 @@ defmodule RestApiWeb.UserController do
     render(conn, :show, user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Users.get_user!(id)
-
-    with {:ok, %User{} = user} <- Users.update_user(user, user_params) do
+  def update(conn, %{"user" => user_params}) do
+    with {:ok, %User{} = user} <- Users.update_user(conn.assigns.account.user, user_params) do
       render(conn, :show, user: user)
     end
   end

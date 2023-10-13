@@ -1,25 +1,15 @@
 defmodule RestApiWeb.AccountController do
   use RestApiWeb, :controller
 
-  alias RestApiWeb.Auth.ErrorResponse
+  import RestApiWeb.Auth.AuthorizePlug
+
   alias RestApiWeb.Auth.{Guardian, ErrorResponse.Unauthorized}
   alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
   # plugs the :is_authorized_account (right below) function into the :update and :delete actions
-  plug :is_authorized_account when action in [:update, :delete]
+  plug :is_authorized when action in [:update, :delete]
 
   action_fallback RestApiWeb.FallbackController
-
-  defp is_authorized_account(conn, _opts) do
-    %{params: %{"account" => params}} = conn
-    account = Accounts.get_account!(params["id"])
-
-    if conn.assigns.account.id == account.id do
-      conn
-    else
-      raise ErrorResponse.Forbidden
-    end
-  end
 
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
