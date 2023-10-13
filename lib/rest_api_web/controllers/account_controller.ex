@@ -3,6 +3,7 @@ defmodule RestApiWeb.AccountController do
 
   import RestApiWeb.Auth.AuthorizePlug
 
+  alias RestApiWeb.Auth.ErrorResponse
   alias RestApiWeb.Auth.{Guardian, ErrorResponse.Unauthorized}
   alias RestApi.{Accounts, Accounts.Account, Users.User, Users}
 
@@ -71,11 +72,20 @@ defmodule RestApiWeb.AccountController do
     render(conn, :show, account: account)
   end
 
-  def update(conn, %{"account" => account_params}) do
-    account = Accounts.get_account!(account_params["id"])
+  def current_account(conn, %{}) do
+    conn |> put_status(:ok) |> render(:show, account: conn.assigns.account)
+  end
 
-    with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
+  def update(conn, %{
+        "current_hashed_password" => current_hashed_password,
+        "account" => account_params
+      }) do
+    with true <- Bcrypt.verify_pass(current_hashed_password, conn.assigns.account.hashed_password),
+         {:ok, %Account{} = account} <-
+           Accounts.update_account(conn.assigns.account, account_params) do
       render(conn, :show, account: account)
+    else
+      _ -> raise ErrorResponse.Unauthorized, message: "Wrong password."
     end
   end
 

@@ -32,6 +32,7 @@ defmodule RestApiWeb.Router do
   scope "/api", RestApiWeb do
     pipe_through [:api, :auth]
     get "/accounts/by_id/:id", AccountController, :show
+    get "/accounts/current", AccountController, :current_account
     # get "/accounts/:id", AccountController, :show
     post "/accounts/update", AccountController, :update
     # delete "/accounts/:id", AccountController, :delete

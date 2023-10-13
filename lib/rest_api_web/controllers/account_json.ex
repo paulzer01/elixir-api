@@ -21,10 +21,6 @@ defmodule RestApiWeb.AccountJSON do
     %{data: data(account, token)}
   end
 
-  def account_and_user(%{account: account, token: token}) do
-    %{data: data(account, token)}
-  end
-
   defp data(%Account{} = account) do
     %{
       id: account.id,
