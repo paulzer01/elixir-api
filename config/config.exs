@@ -34,6 +34,12 @@ config :rest_api, RestApiWeb.Auth.Guardian,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :guardian, Guardian.DB,
+  repo: RestApi.Repo,
+  schema_name: "guardian_tokens",
+  # token_types: ["refresh_token"] # store all token types if not set,
+  sweep_interval: 60
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

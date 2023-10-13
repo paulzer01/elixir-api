@@ -43,7 +43,8 @@ defmodule RestApi.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.3.2"},
-      {:bcrypt_elixir, "~> 3.1.0"}
+      {:bcrypt_elixir, "~> 3.1.0"},
+      {:guardian_db, "~> 3.0.0"}
     ]
   end
 

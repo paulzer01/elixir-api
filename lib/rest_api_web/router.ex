@@ -34,5 +34,6 @@ defmodule RestApiWeb.Router do
     # get "/accounts/:id", AccountController, :show
     post "/accounts/update", AccountController, :update
     # delete "/accounts/:id", AccountController, :delete
+    post "/accounts/sign_out", AccountController, :sign_out
   end
 end
