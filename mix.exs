@@ -44,7 +44,8 @@ defmodule RestApi.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.3.2"},
       {:bcrypt_elixir, "~> 3.1.0"},
-      {:guardian_db, "~> 3.0.0"}
+      {:guardian_db, "~> 3.0.0"},
+      {:faker, "~> 0.17"}
     ]
   end
 

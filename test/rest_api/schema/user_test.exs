@@ -1,5 +1,5 @@
 defmodule RestApi.Schema.UserTest do
-  use ExUnit.Case
+  use RestApi.Support.SchemaCase
   alias RestApi.Users.User
 
   @expected_fields_with_types [
@@ -28,18 +28,10 @@ defmodule RestApi.Schema.UserTest do
 
   describe "changeset/2" do
     test "success: returns a valid changeset when given valid args" do
-      valid_params = %{
-        "id" => Ecto.UUID.generate(),
-        "full_name" => "Tester",
-        "gender" => "Male",
-        "biography" => "Story",
-        "account_id" => Ecto.UUID.generate(),
-        "inserted_at" => DateTime.utc_now(:second),
-        "updated_at" => DateTime.utc_now(:second)
-      }
+      valid_params = valid_params(@expected_fields_with_types)
 
       changeset = User.changeset(%User{}, valid_params)
-      assert %Ecto.Changeset{valid?: true, changes: changes} = changeset
+      assert %Changeset{valid?: true, changes: changes} = changeset
 
       for {field, _} <- @expected_fields_with_types do
         actual = Map.get(changes, field)
@@ -51,17 +43,9 @@ defmodule RestApi.Schema.UserTest do
     end
 
     test "error: returns an error when given un-castable values" do
-      invalid_params = %{
-        "id" => DateTime.utc_now(:second),
-        "full_name" => DateTime.utc_now(:second),
-        "gender" => DateTime.utc_now(:second),
-        "biography" => DateTime.utc_now(:second),
-        "account_id" => DateTime.utc_now(:second),
-        "inserted_at" => "DateTime.utc_now(:second)",
-        "updated_at" => "DateTime.utc_now(:second)"
-      }
+      invalid_params = invalid_params(@expected_fields_with_types)
 
-      assert %Ecto.Changeset{valid?: false, errors: errors} =
+      assert %Changeset{valid?: false, errors: errors} =
                User.changeset(%User{}, invalid_params)
 
       for {field, _} <- @expected_fields_with_types do
@@ -77,7 +61,7 @@ defmodule RestApi.Schema.UserTest do
     test "error: returns an error when required fields are missing" do
       params = %{}
 
-      assert %Ecto.Changeset{valid?: false, errors: errors} = User.changeset(%User{}, params)
+      assert %Changeset{valid?: false, errors: errors} = User.changeset(%User{}, params)
 
       assert errors[:account_id],
              "The field :account_id is missing from errors but is a required field."

@@ -1,5 +1,6 @@
 defmodule RestApi.Schema.AccountTest do
-  use ExUnit.Case
+  use RestApi.Support.SchemaCase
+
   alias RestApi.Accounts.Account
 
   @expected_fields_with_types [
@@ -26,16 +27,10 @@ defmodule RestApi.Schema.AccountTest do
 
   describe "changeset/2" do
     test "success: returns a valid changeset when given valid arguments" do
-      valid_params = %{
-        "id" => Ecto.UUID.generate(),
-        "email" => "test@email.com",
-        "hashed_password" => "hashed_password",
-        "inserted_at" => DateTime.utc_now(:second),
-        "updated_at" => DateTime.utc_now(:second)
-      }
+      valid_params = valid_params(@expected_fields_with_types)
 
       changeset = Account.changeset(%Account{}, valid_params)
-      assert %Ecto.Changeset{valid?: true, changes: changes} = changeset
+      assert %Changeset{valid?: true, changes: changes} = changeset
 
       for {field, _} <- @expected_fields_with_types, field not in [:hashed_password] do
         actual = Map.get(changes, field)
@@ -50,15 +45,9 @@ defmodule RestApi.Schema.AccountTest do
     end
 
     test "error: returns an error changeset when given un-castable values" do
-      invalid_params = %{
-        "id" => DateTime.utc_now(:second),
-        "email" => DateTime.utc_now(:second),
-        "hashed_password" => DateTime.utc_now(:second),
-        "inserted_at" => "DateTime.utc_now(:second)",
-        "updated_at" => "DateTime.utc_now(:second)"
-      }
+      invalid_params = invalid_params(@expected_fields_with_types)
 
-      assert %Ecto.Changeset{valid?: false, errors: errors} =
+      assert %Changeset{valid?: false, errors: errors} =
                Account.changeset(%Account{}, invalid_params)
 
       for {field, _} <- @expected_fields_with_types do
@@ -74,7 +63,7 @@ defmodule RestApi.Schema.AccountTest do
     test "error: returns an error changeset when required fields are missing" do
       params = %{}
 
-      assert %Ecto.Changeset{valid?: false, errors: errors} =
+      assert %Changeset{valid?: false, errors: errors} =
                Account.changeset(%Account{}, params)
 
       for {field, _} <- @expected_fields_with_types, field not in @optional_fields do
@@ -87,7 +76,8 @@ defmodule RestApi.Schema.AccountTest do
       end
 
       for field <- @optional_fields do
-        refute errors[field], "The optional field #{inspect(field)} should not be in errors as it should not be required."
+        refute errors[field],
+               "The optional field #{inspect(field)} should not be in errors as it should not be required."
       end
     end
   end
