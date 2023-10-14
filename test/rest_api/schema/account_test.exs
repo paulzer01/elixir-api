@@ -80,5 +80,29 @@ defmodule RestApi.Schema.AccountTest do
                "The optional field #{inspect(field)} should not be in errors as it should not be required."
       end
     end
+
+    test "error: returns error changeset when an email address is reused" do
+      Ecto.Adapters.SQL.Sandbox.checkout(RestApi.Repo)
+
+      {:ok, existing_account} =
+        %Account{}
+        |> Account.changeset(valid_params(@expected_fields_with_types))
+        |> RestApi.Repo.insert()
+
+      changeset_with_repeated_email =
+        %Account{}
+        |> Account.changeset(valid_params(@expected_fields_with_types))
+        |> Changeset.put_change(:email, existing_account.email)
+
+      assert {:error, %Changeset{valid?: false, errors: errors}} =
+               RestApi.Repo.insert(changeset_with_repeated_email)
+
+      assert errors[:email], "The field :email is missing from errors."
+
+      {_, metadata} = errors[:email]
+
+      assert metadata[:constraint] == :unique,
+             "The constraint for :email should :unique. Getting #{inspect(metadata[:validation])} instead."
+    end
   end
 end
