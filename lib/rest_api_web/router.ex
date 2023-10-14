@@ -24,20 +24,29 @@ defmodule RestApiWeb.Router do
   scope "/api", RestApiWeb do
     pipe_through :api
     get "/", PageController, :index
-    post "/accounts/create", AccountController, :create
-    post "/accounts/sign_in", AccountController, :sign_in
+
+    scope "/accounts" do
+      post "/create", AccountController, :create
+      post "/sign_in", AccountController, :sign_in
+    end
   end
 
   # Any endpoints placed within this scope will be protected by the auth pipeline and require a valid JWT
   scope "/api", RestApiWeb do
     pipe_through [:api, :auth]
-    get "/accounts/by_id/:id", AccountController, :show
-    get "/accounts/current", AccountController, :current_account
-    # get "/accounts/:id", AccountController, :show
-    post "/accounts/update", AccountController, :update
-    # delete "/accounts/:id", AccountController, :delete
-    post "/accounts/sign_out", AccountController, :sign_out
-    post "/accounts/refresh_session", AccountController, :refresh_session
-    put "/users/update", UserController, :update
+
+    scope "/accounts" do
+      get "/by_id/:id", AccountController, :show
+      get "/current", AccountController, :current_account
+      post "/update", AccountController, :update
+      post "/sign_out", AccountController, :sign_out
+      post "/refresh_session", AccountController, :refresh_session
+      # get "/:id", AccountController, :show
+      # delete "/:id", AccountController, :delete
+    end
+
+    scope "/users" do
+      put "/update", UserController, :update
+    end
   end
 end
