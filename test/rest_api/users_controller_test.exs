@@ -27,12 +27,17 @@ defmodule RestApi.UsersControllerTest do
 
         assert actual == expected,
                "Values did not match for #{param_field}. Expected #{expected}, got #{actual}"
-
-        assert user_from_db.inserted_at == user_from_db.updated_at
       end
+
+      assert user_from_db.inserted_at == user_from_db.updated_at
     end
 
     test "error: returns an error when attempt to create user without an account" do
+      assert_raise FunctionClauseError, fn ->
+        Users.create_user(nil, Factory.string_params_for(:user))
+      end
+
+      # alternative longer way
       user_params = Factory.string_params_for(:user)
 
       failed_user_create =
