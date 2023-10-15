@@ -71,7 +71,7 @@ defmodule RestApi.AccountsControllerTest do
 
   describe "get_full_account/1" do
     test "success: returns an account with preloaded user given a valid id" do
-      # Can come back to figure out how to make this work and avoid a database call with changeset intermediary steps
+      # Can come back to figure out how to make this work and avoid intermediary steps
       # account = Factory.insert(:account)
       # user = Factory.insert(:user, account: account)
 
@@ -84,7 +84,7 @@ defmodule RestApi.AccountsControllerTest do
 
       assert {:ok, %User{}} = Users.create_user(account, user_params)
 
-      assert %Account{} = returned_account = Accounts.get_full_account(account.id) |> IO.inspect()
+      assert %Account{} = returned_account = Accounts.get_full_account(account.id)
 
       for {field, expected_value} <- account_params,
           field not in ["user"] do
